@@ -1,3 +1,5 @@
+import { RequestStatus } from './../../../../models/request-status.model';
+import { AuthService } from './../../../../services/auth.service';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 @Component({
@@ -9,18 +11,30 @@ export class ForgotPasswordFormComponent {
   form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.email, Validators.required]],
   });
-  status: string = 'init';
+  status: RequestStatus = 'init';
   emailSent = false;
 
   constructor(
     private formBuilder: FormBuilder,
+    private authService: AuthService
   ) { }
 
   sendLink() {
     if (this.form.valid) {
       this.status = 'loading';
       const { email } = this.form.getRawValue();
-      // TODO: Connect
+      this.authService.recovery(email)
+      .subscribe({
+        next: () =>{
+          this.status = 'success';
+          this.emailSent = true;
+        },
+        error: (error)=>{
+          this.status = 'failed';
+          console.log('error_recovery', error);
+        }
+
+      })
     } else {
       this.form.markAllAsTouched();
     }

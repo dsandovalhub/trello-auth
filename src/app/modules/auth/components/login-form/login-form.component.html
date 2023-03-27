@@ -1,4 +1,4 @@
-<h1 class="text-center font-bold py-2 text-gray-700">Log in to Trello</h1>
+<h1 class="text-center font-bold py-2 text-gray-700">LOGIN to Trello</h1>
 <form [formGroup]="form" novalidate class="space-y-4" (ngSubmit)="doLogin()">
   <div>
     <div class="relative">
@@ -26,7 +26,7 @@
       >
         This field should be a email
       </p>
-    </div>
+    </div>    
   </div>
   <div>
     <div class="relative">
@@ -54,6 +54,14 @@
         This field should be greater than 6 characters
       </p>
     </div>
+  </div>
+  <div *ngIf="status === 'failed'">
+    <p
+      class="font-medium text-red-500 text-xs mt-1 ml-1"
+    >
+      Credentials are invalid
+    </p>
+
   </div>
   <div>
     <app-btn
