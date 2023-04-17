@@ -1,3 +1,6 @@
+import { User } from './../../../../models/user.model';
+import { Router } from '@angular/router';
+import { AuthService } from './../../../../services/auth.service';
 import { Component } from '@angular/core';
 import {
   faBell,
@@ -18,6 +21,16 @@ export class NavbarComponent {
 
   isOpenOverlayAvatar = false;
   isOpenOverlayBoards = false;
+  
+  user$ = this.authService.user$;
 
-  constructor() {}
+  constructor(
+    private authService: AuthService, 
+    private route: Router
+  ) {} 
+
+  logout(){
+    this.authService.logout();
+    this.route.navigate(['/login'])
+  }
 }

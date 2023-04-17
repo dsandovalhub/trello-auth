@@ -1,10 +1,11 @@
+import { User } from './../models/user.model';
 import { ResponseLogin } from './../models/auth.model';
 import { TokenService } from './token.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { switchMap, tap } from 'rxjs';
+import { switchMap, tap, BehaviorSubject } from 'rxjs';
 
 
 
@@ -13,6 +14,9 @@ import { switchMap, tap } from 'rxjs';
 })
 export class AuthService {
   apiURL = environment.API_URL;
+  //Guarda el perfil del usuario y puede 
+  //destruir cualquier componente  de forma reactiva (guarda un estado general)
+  user$ = new BehaviorSubject<User | null>(null);
 
   constructor(
     private http: HttpClient,
@@ -55,10 +59,25 @@ export class AuthService {
     });
   }
 
+  
   changePassword(token: string, newPassword: string){
     return this.http.post(`${this.apiURL}/api/v1/auth/change-password`,{
       token,newPassword
     });
-
+  }
+  
+  getProfile(){
+    const token = this.tokenService.getToken();
+    return this.http.get<User>(`${this.apiURL}/api/v1/auth/profile`,{
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    }).pipe(
+      tap(user => {
+        this.user$.next(user);
+      }));
+  }
+  logout(){
+    this.tokenService.removeToken();
   }
 }
